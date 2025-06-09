@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📞 VEN 9-1-1 Carabobo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style id="app-style">
+    .step-content {
+      display: none;
+    }
+    
+    .step-content.active {
+      display: block;
+    }
+    
+    .progress-bar {
+      transition: width 0.3s ease;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .invalid-feedback {
+      display: none;
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    
+    .is-invalid {
+      border-color: #dc3545 !important;
+    }
+    
+    .is-invalid + .invalid-feedback {
+      display: block;
+    }
+    
+    .organismo-block {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background-color: #f8fafc;
+    }
+    
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="h-screen overflow-hidden flex flex-col">
+    <!-- Header with tabs -->
+    <header class="bg-white shadow">
+      <div class="py-4 px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-xl font-semibold text-gray-800 mb-3 sm:mb-0">📞 VEN 9-1-1 Carabobo</h2>
+        
+        <!-- Tab Navigation - Made responsive with proper spacing -->
+        <div class="flex overflow-x-auto space-x-2 pb-1">
+          <button id="crear-ficha-btn" class="px-4 py-2 rounded-lg text-center whitespace-nowrap hover:bg-blue-700 hover:text-white bg-blue-900 text-white">
+            <i class="fas fa-plus-circle mr-2"></i> Crear Ficha
+          </button>
+          <button id="casos-pendientes-btn" class="px-4 py-2 rounded-lg text-center whitespace-nowrap hover:bg-blue-700 hover:text-white">
+            <i class="fas fa-clock mr-2"></i> Pendientes
+          </button>
+          <button id="casos-atendidos-btn" class="px-4 py-2 rounded-lg text-center whitespace-nowrap hover:bg-blue-700 hover:text-white">
+            <i class="fas fa-check-circle mr-2"></i> Atendidos
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area - Remove margin-left that was for sidebar -->
+    <div id="main-content" class="flex-1 overflow-y-auto">
+      <!-- Content Area with responsive padding -->
+      <div class="p-3 sm:p-6">
+        <!-- Crear Ficha de Emergencia Section with responsive padding -->
+        <div id="crear-ficha-content" class="bg-white rounded-lg shadow p-3 sm:p-6">
+          <div class="mb-6">
+            <div class="flex items-center mb-4">
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 20%"></div>
+              </div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-600 px-1">
+              <span>Información Básica</span>
+              <span>Ubicación</span>
+              <span>Datos del Solicitante</span>
+              <span>Organismos</span>
+              <span>Cierre</span>
+            </div>
+          </div>
+
+          <form id="emergency-form">
+            <!-- Step 1: Información Básica -->
+            <div id="step-1" class="step-content active">
+              <h3 class="text-lg font-semibold mb-4">Paso 1: Información Básica</h3>
+              
+              <div class="form-group">
+                <label for="tipo-emergencia" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Emergencia *</label>
+                <select id="tipo-emergencia" name="tipo-emergencia" class="w-full p-2 border border-gray-300 rounded-md" required>
+                  <option value="">Seleccionar tipo</option>
+                  <option value="seguridad-ciudadana">Seguridad Ciudadana</option>
+                  <option value="salud">Salud</option>
+                  <option value="transito-terrestre">Transito Terrestre</option>
+                  <option value="gestion-de-riesgo">Gestión De Riesgo</option>
+                </select>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="descripcion-caso" class="block text-sm font-medium text-gray-700 mb-1">Descripción del Caso *</label>
+                <textarea id="descripcion-caso" name="descripcion-caso" rows="3" class="w-full p-2 border border-gray-300 rounded-md" required></textarea>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="municipio" class="block text-sm font-medium text-gray-700 mb-1">Municipio *</label>
+                <select id="municipio" name="municipio" class="w-full p-2 border border-gray-300 rounded-md" required>
+                  <option value="">Seleccionar municipio</option>
+                  <option value="bejuma">Bejuma</option>
+                  <option value="carlos_arvelo">Carlos Arvelo</option>
+                  <option value="diego_ibarra">Diego Ibarra</option>
+                  <option value="guacara">Guacara</option>
+                  <option value="juan_jose_mora">Juan José Mora</option>
+                  <option value="libertador">Libertador</option>
+                  <option value="los_guayos">Los Guayos</option>
+                  <option value="miranda">Miranda</option>
+                  <option value="montalban">Montalbán</option>
+                  <option value="naguanagua">Naguanagua</option>
+                  <option value="puerto_cabello">Puerto Cabello</option>
+                  <option value="san_diego">San Diego</option>
+                  <option value="san_joaquin">San Joaquín</option>
+                  <option value="valencia">Valencia</option>
+                </select>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="parroquia" class="block text-sm font-medium text-gray-700 mb-1">Parroquia *</label>
+                <select id="parroquia" name="parroquia" class="w-full p-2 border border-gray-300 rounded-md" required disabled>
+                  <option value="">Seleccione un municipio primero</option>
+                </select>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="mt-6 flex justify-between">
+                <div></div>
+                <button type="button" id="step-1-next" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                  Siguiente <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Step 2: Ubicación -->
+            <div id="step-2" class="step-content">
+              <h3 class="text-lg font-semibold mb-4">Paso 2: Ubicación</h3>
+              
+              <!-- Improve grid responsiveness for location fields -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                  <label for="avenida" class="block text-sm font-medium text-gray-700 mb-1">Avenida</label>
+                  <input type="text" id="avenida" name="avenida" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                
+                <div class="form-group">
+                  <label for="sector" class="block text-sm font-medium text-gray-700 mb-1">Sector</label>
+                  <input type="text" id="sector" name="sector" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                
+                <div class="form-group">
+                  <label for="calle" class="block text-sm font-medium text-gray-700 mb-1">Calle</label>
+                  <input type="text" id="calle" name="calle" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                
+                <div class="form-group">
+                  <label for="barrio" class="block text-sm font-medium text-gray-700 mb-1">Barrio</label>
+                  <input type="text" id="barrio" name="barrio" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                
+                <div class="form-group">
+                  <label for="casa" class="block text-sm font-medium text-gray-700 mb-1">Casa</label>
+                  <input type="text" id="casa" name="casa" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                
+                <div class="form-group">
+                  <label for="urbanizacion" class="block text-sm font-medium text-gray-700 mb-1">Urbanización</label>
+                  <input type="text" id="urbanizacion" name="urbanizacion" class="w-full p-2 border border-gray-300 rounded-md">
+                </div>
+              </div>
+              
+              <div class="form-group mt-4">
+                <label for="punto-referencia" class="block text-sm font-medium text-gray-700 mb-1">Punto de Referencia *</label>
+                <textarea id="punto-referencia" name="punto-referencia" rows="3" class="w-full p-2 border border-gray-300 rounded-md" required></textarea>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="mt-6 flex justify-between">
+                <button type="button" id="step-2-prev" class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">
+                  <i class="fas fa-arrow-left mr-1"></i> Anterior
+                </button>
+                <button type="button" id="step-2-next" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                  Siguiente <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Step 3: Datos del Solicitante -->
+            <div id="step-3" class="step-content">
+              <h3 class="text-lg font-semibold mb-4">Paso 3: Datos del Solicitante</h3>
+              
+              <div class="form-group">
+                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                <input type="text" id="nombre" name="nombre" class="w-full p-2 border border-gray-300 rounded-md" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="telefono1" class="block text-sm font-medium text-gray-700 mb-1">Teléfono 1 *</label>
+                <input type="tel" id="telefono1" name="telefono1" class="w-full p-2 border border-gray-300 rounded-md" required>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="telefono2" class="block text-sm font-medium text-gray-700 mb-1">Teléfono 2</label>
+                <input type="tel" id="telefono2" name="telefono2" class="w-full p-2 border border-gray-300 rounded-md">
+              </div>
+              
+              <div class="form-group">
+                <div class="flex items-center justify-between mb-1">
+                  <label for="cedula" class="block text-sm font-medium text-gray-700">Cédula</label>
+                  <div class="flex items-center">
+                    <input type="checkbox" id="no-indico" name="no-indico" class="mr-1">
+                    <label for="no-indico" class="text-sm text-gray-600">No indicó</label>
+                  </div>
+                </div>
+                <input type="text" id="cedula" name="cedula" class="w-full p-2 border border-gray-300 rounded-md">
+              </div>
+              
+              <div class="form-group">
+                <label for="observaciones" class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                <textarea id="observaciones" name="observaciones" rows="2" class="w-full p-2 border border-gray-300 rounded-md"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="descripcion-solicitante" class="block text-sm font-medium text-gray-700 mb-1">Descripción del Caso (Según Solicitante) *</label>
+                <textarea id="descripcion-solicitante" name="descripcion-solicitante" rows="3" class="w-full p-2 border border-gray-300 rounded-md" required></textarea>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="mt-6 flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0">
+                <button type="button" id="step-3-prev" class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">
+                  <i class="fas fa-arrow-left mr-1"></i> Anterior
+                </button>
+                <button type="button" id="step-3-next" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                  Siguiente <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Step 4: Organismos Actuantes -->
+            <div id="step-4" class="step-content">
+              <h3 class="text-lg font-semibold mb-4">Paso 4: Organismos Actuantes</h3>
+              
+              <div id="organismos-container">
+                <!-- Organismos blocks will be added here dynamically -->
+                <div class="organismo-block" data-index="0">
+                  <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-medium">Organismo #1</h4>
+                    <button type="button" class="text-red-600 hover:text-red-800 remove-organismo hidden">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="organismo-tipo-0" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Organismo *</label>
+                    <select id="organismo-tipo-0" name="organismos[0][tipo]" class="organismo-tipo w-full p-2 border border-gray-300 rounded-md" required>
+                      <option value="">Seleccionar tipo</option>
+                      <option value="cuadrante">Cuadrante de Paz</option>
+                      <option value="bomberos">Bomberos</option>
+                      <option value="sistema-integrado">Sistema Integrado</option>
+                      <option value="0800-bigote">0800 Bigote</option>
+                    </select>
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                  
+                  <div class="form-group cuadrante-numero-container hidden">
+                    <label for="cuadrante-numero-0" class="block text-sm font-medium text-gray-700 mb-1">Número de Cuadrante *</label>
+                    <input type="text" id="cuadrante-numero-0" name="organismos[0][cuadrante_numero]" class="w-full p-2 border border-gray-300 rounded-md">
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                  
+                  <div class="form-group bomberos-contacto-container hidden">
+                    <label for="bomberos-contacto-0" class="block text-sm font-medium text-gray-700 mb-1">Contacto *</label>
+                    <select id="bomberos-contacto-0" name="organismos[0][bomberos_contacto]" class="w-full p-2 border border-gray-300 rounded-md">
+                      <option value="">Seleccionar contacto</option>
+                      <option value="bomberos-estado" data-phone="0424 - 4022160">Bomberos del Estado</option>
+                      <option value="bomberos-puerto-cabello" data-phone="0242 - 3620445">Bomberos de Puerto Cabello</option>
+                      <option value="bomberos-bejuma" data-phone="0412 - 4942233">Bomberos Bejuma</option>
+                      <option value="bomberos-san-joaquin" data-phone="0412 - 9614528, 0245 - 5521552">Bomberos San Joaquín</option>
+                      <option value="bomberos-carlos-arvelo" data-phone="0245 - 3411974">Bomberos Carlos Arvelo</option>
+                      <option value="bomberos-valencia" data-phone="0424 - 4739197">Bomberos Valencia</option>
+                      <option value="bomberos-diego-ibarra" data-phone="0412 - 5790028">Bomberos Diego Ibarra</option>
+                      <option value="bomberos-libertador" data-phone="0412 - 2798992">Bomberos Libertador</option>
+                      <option value="bomberos-guacara" data-phone="0412 - 9517659">Bomberos Guacara</option>
+                      <option value="bomberos-los-guayos" data-phone="0412 - 5777929">Bomberos Los Guayos</option>
+                      <option value="bomberos-juan-jose-mora" data-phone="0242 - 3725872">Bomberos Juan José Mora</option>
+                      <option value="bomberos-universitarios" data-phone="0424 - 4222721">Bomberos Universitarios</option>
+                      <option value="bomberos-montalban" data-phone="0249 - 7985306">Bomberos Montalbán</option>
+                      <option value="bomberos-san-diego" data-phone="0424 - 4414192, 0424 - 4583484">Bomberos San Diego</option>
+                    </select>
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="organismo-numero-0" class="block text-sm font-medium text-gray-700 mb-1">Número *</label>
+                    <input type="text" id="organismo-numero-0" name="organismos[0][numero]" class="w-full p-2 border border-gray-300 rounded-md" required>
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="organismo-persona-0" class="block text-sm font-medium text-gray-700 mb-1">Persona que Atiende *</label>
+                    <input type="text" id="organismo-persona-0" name="organismos[0][persona]" class="w-full p-2 border border-gray-300 rounded-md" required>
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="organismo-unidad-0" class="block text-sm font-medium text-gray-700 mb-1">Unidad Enviada *</label>
+                    <input type="text" id="organismo-unidad-0" name="organismos[0][unidad]" class="w-full p-2 border border-gray-300 rounded-md" required>
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="organismo-mando-0" class="block text-sm font-medium text-gray-700 mb-1">Mando a Cargo *</label>
+                    <input type="text" id="organismo-mando-0" name="organismos[0][mando]" class="w-full p-2 border border-gray-300 rounded-md" required>
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="my-4">
+                <button type="button" id="add-organismo" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
+                  <i class="fas fa-plus mr-1"></i> Agregar Otro Organismo
+                </button>
+              </div>
+              
+              <div id="resumen-container" class="mt-6 p-4 bg-gray-100 rounded-md">
+                <h4 class="font-semibold mb-3">Resumen de Organismos</h4>
+                <div id="loading-resumen" class="flex items-center justify-center py-4 hidden">
+                  <i class="fas fa-spinner fa-spin text-blue-600 text-xl mr-2 spinner"></i>
+                  <span>Generando resumen...</span>
+                </div>
+                <div id="resumen-content" class="space-y-3">
+                  <p class="text-gray-600 italic text-sm">Complete los datos de organismos actuantes para generar el resumen.</p>
+                </div>
+              </div>
+              
+              <div class="mt-6 flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0">
+                <button type="button" id="step-4-prev" class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">
+                  <i class="fas fa-arrow-left mr-1"></i> Anterior
+                </button>
+                <button type="button" id="step-4-next" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                  Siguiente <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Step 5: Cierre -->
+            <div id="step-5" class="step-content">
+              <h3 class="text-lg font-semibold mb-4">Paso 5: Cierre</h3>
+              
+              <div class="form-group">
+                <label for="actividad-lugar" class="block text-sm font-medium text-gray-700 mb-1">Retroalimentación *</label>
+                <textarea id="actividad-lugar" name="actividad-lugar" rows="4" class="w-full p-2 border border-gray-300 rounded-md" required></textarea>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div id="feedback-additional-container" class="space-y-3 mt-3">
+                <!-- Additional feedback fields will be added here -->
+              </div>
+              
+              <div class="mt-3">
+                <button type="button" id="add-feedback-field" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                  <i class="fas fa-plus-circle mr-1"></i> Añadir campo adicional
+                </button>
+              </div>
+              
+              <!-- New section: Datos del Operador -->
+              <div class="mt-6 border-t pt-4">
+                <h4 class="font-medium text-gray-800 mb-3">Datos del Operador</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="form-group">
+                    <label for="codigo-operador" class="block text-sm font-medium text-gray-700 mb-1">Código del Operador</label>
+                    <input type="text" id="codigo-operador" name="codigo-operador" class="w-full p-2 border border-gray-300 rounded-md">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="nombre-operador" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Operador</label>
+                    <input type="text" id="nombre-operador" name="nombre-operador" class="w-full p-2 border border-gray-300 rounded-md">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Estado Final *</label>
+                <div class="space-y-2">
+                  <div class="flex items-center">
+                    <input type="radio" id="estado-atendido" name="estado-final" value="atendido" class="mr-2" required>
+                    <label for="estado-atendido">Atendido efectivamente</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input type="radio" id="estado-pendiente" name="estado-final" value="pendiente" class="mr-2">
+                    <label for="estado-pendiente">Atención pendiente</label>
+                  </div>
+                </div>
+                <div class="invalid-feedback">Este campo es obligatorio</div>
+              </div>
+              
+              <div class="mt-6 flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0">
+                <button type="button" id="step-5-prev" class="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">
+                  <i class="fas fa-arrow-left mr-1"></i> Anterior
+                </button>
+                <button type="submit" id="submit-form" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
+                  <i class="fas fa-save mr-1"></i> Guardar Ficha
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Casos Pendientes Section -->
+        <div id="casos-pendientes-content" class="bg-white rounded-lg shadow p-3 sm:p-6 hidden">
+          <h3 class="text-lg font-semibold mb-4">Casos Pendientes</h3>
+          <div id="casos-pendientes-list" class="space-y-4">
+            <p class="text-gray-600 italic text-center py-8">No hay casos pendientes</p>
+          </div>
+        </div>
+        
+        <!-- Casos Atendidos Section -->
+        <div id="casos-atendidos-content" class="bg-white rounded-lg shadow p-3 sm:p-6 hidden">
+          <h3 class="text-lg font-semibold mb-4">Casos Atendidos Efectivamente</h3>
+          <div id="casos-atendidos-list" class="space-y-4">
+            <p class="text-gray-600 italic text-center py-8">No hay casos atendidos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="case-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="p-4 sm:p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="modal-title" class="text-xl font-semibold text-gray-800">Detalles del Caso</h3>
+          <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div id="modal-content" class="space-y-4">
+          <!-- Case details will be populated here with responsive classes -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script id="app-script">
+  // DOM elements
+  const mainContent = document.getElementById('main-content');
+  const crearFichaBtn = document.getElementById('crear-ficha-btn');
+  const casosPendientesBtn = document.getElementById('casos-pendientes-btn');
+  const casosAtendidosBtn = document.getElementById('casos-atendidos-btn');
+
+  const crearFichaContent = document.getElementById('crear-ficha-content');
+  const casosPendientesContent = document.getElementById('casos-pendientes-content');
+  const casosAtendidosContent = document.getElementById('casos-atendidos-content');
+
+  const form = document.getElementById('emergency-form');
+  const progressBar = document.getElementById('progress-bar');
+  const municipioSelect = document.getElementById('municipio');
+  const parroquiaSelect = document.getElementById('parroquia');
+  const noIndicoCheckbox = document.getElementById('no-indico');
+  const cedulaInput = document.getElementById('cedula');
+  const addOrganismoBtn = document.getElementById('add-organismo');
+  const organismosContainer = document.getElementById('organismos-container');
+  const resumenContainer = document.getElementById('resumen-container');
+  const loadingResumen = document.getElementById('loading-resumen');
+  const resumenContent = document.getElementById('resumen-content');
+
+  const steps = document.querySelectorAll('.step-content');
+  const step1NextBtn = document.getElementById('step-1-next');
+  const step2PrevBtn = document.getElementById('step-2-prev');
+  const step2NextBtn = document.getElementById('step-2-next');
+  const step3PrevBtn = document.getElementById('step-3-prev');
+  const step3NextBtn = document.getElementById('step-3-next');
+  const step4PrevBtn = document.getElementById('step-4-prev');
+  const step4NextBtn = document.getElementById('step-4-next');
+  const step5PrevBtn = document.getElementById('step-5-prev');
+  const submitFormBtn = document.getElementById('submit-form');
+
+  function showSection(section) {
+    crearFichaContent.classList.add('hidden');
+    casosPendientesContent.classList.add('hidden');
+    casosAtendidosContent.classList.add('hidden');
+    section.classList.remove('hidden');
+
+    crearFichaBtn.classList.remove('bg-blue-900', 'text-white');
+    casosPendientesBtn.classList.remove('bg-blue-900', 'text-white');
+    casosAtendidosBtn.classList.remove('bg-blue-900', 'text-white');
+
+    if (section === crearFichaContent) {
+      crearFichaBtn.classList.add('bg-blue-900', 'text-white');
+    } else if (section === casosPendientesContent) {
+      casosPendientesBtn.classList.add('bg-blue-900', 'text-white');
+    } else {
+      casosAtendidosBtn.classList.add('bg-blue-900', 'text-white');
+    }
+  }
+
+  crearFichaBtn.addEventListener('click', () => showSection(crearFichaContent));
+  casosPendientesBtn.addEventListener('click', () => {
+    showSection(casosPendientesContent);
+    loadCasosPendientes();
+  });
+  casosAtendidosBtn.addEventListener('click', () => {
+    showSection(casosAtendidosContent);
+    loadCasosAtendidos();
+  });
+
+  let currentStep = 1;
+  function showStep(stepNumber) {
+    steps.forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${stepNumber}`).classList.add('active');
+    progressBar.style.width = `${((stepNumber - 1) / 4) * 100}%`;
+    currentStep = stepNumber;
+  }
+  function validateStep(stepNumber) {
+    return true;
+  }
+
+  step1NextBtn.addEventListener('click', () => { if (validateStep(1)) showStep(2); });
+  step2PrevBtn.addEventListener('click', () => showStep(1));
+  step2NextBtn.addEventListener('click', () => { if (validateStep(2)) showStep(3); });
+  step3PrevBtn.addEventListener('click', () => showStep(2));
+  step3NextBtn.addEventListener('click', () => { if (validateStep(3)) { showStep(4); updateResumen(); }});
+  step4PrevBtn.addEventListener('click', () => showStep(3));
+  step4NextBtn.addEventListener('click', () => { if (validateStep(4)) showStep(5); });
+  step5PrevBtn.addEventListener('click', () => showStep(4));
+
+  const parroquiasByMunicipio = {
+    "bejuma": [{ value: "bejuma", label: "Bejuma" }],
+    "carlos_arvelo": [
+      { value: "guigue", label: "Güigüe" },
+      { value: "tacarigua", label: "Tacarigua" },
+      { value: "belen", label: "Belén" }
+    ],
+    "diego_ibarra": [
+      { value: "aguascalientes", label: "Aguascalientes" },
+      { value: "mariara", label: "Mariara" }
+    ],
+    "guacara": [
+      { value: "yagua", label: "Yagua" },
+      { value: "ciudad_alianza", label: "Ciudad Alianza" },
+      { value: "guacara", label: "Guacara" }
+    ],
+    "juan_jose_mora": [
+      { value: "moron", label: "Morón" }
+    ],
+    "libertador": [
+      { value: "tocuyito", label: "Tocuyito" },
+      { value: "independencia", label: "Independencia" }
+    ],
+    "los_guayos": [
+      { value: "los_guayos", label: "Los Guayos" }
+    ],
+    "miranda": [
+      { value: "miranda", label: "Miranda" }
+    ],
+    "montalban": [
+      { value: "montalban", label: "Montalbán" }
+    ],
+    "naguanagua": [
+      { value: "naguanagua", label: "Naguanagua" }
+    ],
+    "puerto_cabello": [
+      { value: "bartolome_salom", label: "Bartolomé Salom" }, 
+      { value: "democracia", label: "Democracia" }, 
+      { value: "fraternidad", label: "Fraternidad" }, 
+      { value: "goiagoaza", label: "Goiagoaza" }, 
+      { value: "juan_jose_flores", label: "Juan José Flores" }
+    ],
+    "san_diego": [
+      { value: "san-diego", label: "San Diego" }
+    ],
+    "san_joaquin": [
+      { value: "san-joaquin", label: "San Joaquín" }
+    ],
+    "valencia": [
+      { value: "candelaria", label: "Candelaria" }, 
+      { value: "el_socorro", label: "El Socorro" }, 
+      { value: "miguel_pena", label: "Miguel Peña" }, 
+      { value: "rafael_urdaneta", label: "Rafael Urdaneta" }, 
+      { value: "san_blas", label: "San Blas" }, 
+      { value: "san_jose", label: "San José" }, 
+      { value: "santa_rosa", label: "Santa Rosa" }
+    ]
+  };
+  municipioSelect.addEventListener('change', function() {
+    const val = this.value;
+    parroquiaSelect.disabled = !val;
+    parroquiaSelect.innerHTML = val
+      ? `<option value="">Seleccionar parroquia</option>${(parroquiasByMunicipio[val]||[]).map(p=>`<option value="${p.value}">${p.label}</option>`).join('')}`
+      : '<option value="">Seleccione un municipio primero</option>';
+  });
+
+  noIndicoCheckbox.addEventListener('change', function() {
+    if (this.checked) { cedulaInput.value='No indicó'; cedulaInput.disabled=true; }
+    else { cedulaInput.value=''; cedulaInput.disabled=false; }
+  });
+
+  let organismoCounter = 1;
+
+  addOrganismoBtn.addEventListener('click', function() {
+    const idx = organismoCounter;
+    const block = document.createElement('div');
+    block.className='organismo-block'; block.dataset.index=idx;
+    block.innerHTML=`
+      <div class="flex justify-between items-center mb-3">
+        <h4 class="font-medium">Organismo #${idx+1}</h4>
+        <button type="button" class="text-red-600 hover:text-red-800 remove-organismo ${idx===0?'hidden':''}">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Organismo *</label>
+        <select id="organismo-tipo-${idx}" name="organismos[${idx}][tipo]" class="organismo-tipo w-full p-2 border border-gray-300 rounded-md">
+          <option value="">Seleccionar tipo</option>
+          <option value="cuadrante">Cuadrante de Paz</option>
+          <option value="bomberos">Bomberos</option>
+          <option value="sistema-integrado">Sistema Integrado</option>
+          <option value="0800-bigote">0800 Bigote</option>
+        </select>
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>
+      <div class="form-group cuadrante-numero-container hidden">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Número de Cuadrante *</label>
+        <input type="text" id="cuadrante-numero-${idx}" name="organismos[${idx}][cuadrante_numero]" class="w-full p-2 border border-gray-300 rounded-md">
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>
+      <div class="form-group bomberos-contacto-container hidden">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Contacto *</label>
+        <select id="bomberos-contacto-${idx}" name="organismos[${idx}][bomberos_contacto]" class="w-full p-2 border border-gray-300 rounded-md">
+          <option value="">Seleccionar contacto</option>
+          <option value="bomberos-estado" data-phone="0424 - 4022160">Bomberos del Estado</option>
+          <option value="bomberos-puerto-cabello" data-phone="0242 - 3620445">Bomberos de Puerto Cabello</option>
+          <option value="bomberos-bejuma" data-phone="0412 - 4942233">Bomberos Bejuma</option>
+          <option value="bomberos-san-joaquin" data-phone="0412 - 9614528, 0245 - 5521552">Bomberos San Joaquín</option>
+          <option value="bomberos-carlos-arvelo" data-phone="0245 - 3411974">Bomberos Carlos Arvelo</option>
+          <option value="bomberos-valencia" data-phone="0424 - 4739197">Bomberos Valencia</option>
+          <option value="bomberos-diego-ibarra" data-phone="0412 - 5790028">Bomberos Diego Ibarra</option>
+          <option value="bomberos-libertador" data-phone="0412 - 2798992">Bomberos Libertador</option>
+          <option value="bomberos-guacara" data-phone="0412 - 9517659">Bomberos Guacara</option>
+          <option value="bomberos-los-guayos" data-phone="0412 - 5777929">Bomberos Los Guayos</option>
+          <option value="bomberos-juan-jose-mora" data-phone="0242 - 3725872">Bomberos Juan José Mora</option>
+          <option value="bomberos-universitarios" data-phone="0424 - 4222721">Bomberos Universitarios</option>
+          <option value="bomberos-montalban" data-phone="0249 - 7985306">Bomberos Montalbán</option>
+          <option value="bomberos-san-diego" data-phone="0424 - 4414192, 0424 - 4583484">Bomberos San Diego</option>
+        </select>
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Número *</label>
+        <input type="text" id="organismo-numero-${idx}" name="organismos[${idx}][numero]" class="w-full p-2 border border-gray-300 rounded-md" required>
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Persona que Atiende *</label>
+        <input type="text" id="organismo-persona-${idx}" name="organismos[${idx}][persona]" class="w-full p-2 border border-gray-300 rounded-md" required>
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Unidad Enviada *</label>
+        <input type="text" id="organismo-unidad-${idx}" name="organismos[${idx}][unidad]" class="w-full p-2 border border-gray-300 rounded-md" required>
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>
+      <div class="form-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mando a Cargo *</label>
+        <input type="text" id="organismo-mando-${idx}" name="organismos[${idx}][mando]" class="w-full p-2 border border-gray-300 rounded-md" required>
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+      </div>`;
+    organismosContainer.appendChild(block);
+
+    block.querySelector('.organismo-tipo').addEventListener('change', handleOrganismoTipoChange);
+    block.querySelector('.remove-organismo').addEventListener('click', () => {
+      block.remove(); updateResumen();
+      const rem = document.querySelectorAll('.organismo-block');
+      if (rem.length === 1) rem[0].querySelector('.remove-organismo').classList.add('hidden');
+    });
+    organismoCounter++;
+  });
+
+  function handleOrganismoTipoChange() {
+    const organismoBlock = this.closest('.organismo-block');
+    const cuadranteContainer = organismoBlock.querySelector('.cuadrante-numero-container');
+    const bomberosContainer = organismoBlock.querySelector('.bomberos-contacto-container');
+    const cuadranteInput = cuadranteContainer.querySelector('input');
+    const bomberosSelect = bomberosContainer.querySelector('select');
+    const numeroInput = organismoBlock.querySelector('[id^="organismo-numero-"]');
+
+    cuadranteContainer.classList.add('hidden');
+    bomberosContainer.classList.add('hidden');
+    
+    if (this.value === 'cuadrante') {
+      cuadranteContainer.classList.remove('hidden');
+    } else if (this.value === 'bomberos') {
+      bomberosContainer.classList.remove('hidden');
+      
+      bomberosSelect.addEventListener('change', function(){
+        const selectedOption = this.options[this.selectedIndex];
+        const existing = organismoBlock.querySelector('.bomberos-phones-container');
+        if (existing) existing.remove();
+        if (selectedOption && selectedOption.dataset.phone) {
+          const phoneData = selectedOption.dataset.phone;
+          if (phoneData.includes(',')) {
+            const phoneNumbersContainer = document.createElement('div');
+            phoneNumbersContainer.className='bomberos-phones-container form-group mt-2';
+            phoneNumbersContainer.innerHTML='<label class="block text-sm font-medium text-gray-700 mb-1">Seleccione un número:</label>';
+            const radioGroup = document.createElement('div');
+            radioGroup.className='space-y-2';
+            phoneData.split(',').map(p=>p.trim()).forEach((phone,idx)=>{
+              const radioDiv=document.createElement('div');
+              radioDiv.className='flex items-center';
+              const radioId=`phone-${organismoBlock.dataset.index}-${idx}`;
+              radioDiv.innerHTML=`
+                <input type="radio" id="${radioId}" name="phone-${organismoBlock.dataset.index}" value="${phone}" class="mr-2">
+                <label for="${radioId}">${phone}</label>`;
+              radioGroup.appendChild(radioDiv);
+            });
+            phoneNumbersContainer.appendChild(radioGroup);
+            bomberosContainer.after(phoneNumbersContainer);
+            phoneNumbersContainer.querySelectorAll('input[type="radio"]').forEach(radio=>{
+              radio.addEventListener('change',function(){ if(this.checked) numeroInput.value=this.value; });
+            });
+            const first=phoneNumbersContainer.querySelector('input[type="radio"]');
+            if(first){ first.checked=true; numeroInput.value=first.value; }
+          } else numeroInput.value=phoneData;
+        }
+      });
+      if (bomberosSelect.value) bomberosSelect.dispatchEvent(new Event('change'));
+    } else if (this.value==='sistema-integrado') numeroInput.value='0412 - 8896351';
+    else if (this.value==='0800-bigote') numeroInput.value='0800 - 2446837, 0241 - 8398211';
+
+    updateResumen();
+  }
+
+  document.querySelectorAll('.organismo-tipo').forEach(el=>
+    el.addEventListener('change', handleOrganismoTipoChange)
+  );
+
+  function updateResumen(){
+    loadingResumen.classList.remove('hidden');
+    resumenContent.classList.add('hidden');
+    setTimeout(()=>{
+      const organismos=[], blocks=document.querySelectorAll('.organismo-block');
+      blocks.forEach(b=>{
+        const i=b.dataset.index;
+        const t=document.getElementById(`organismo-tipo-${i}`).value;
+        const num=document.getElementById(`organismo-numero-${i}`).value||'';
+        const per=document.getElementById(`organismo-persona-${i}`).value||'';
+        const uni=document.getElementById(`organismo-unidad-${i}`).value||'';
+        const man=document.getElementById(`organismo-mando-${i}`).value||'';
+        let extra='';
+        if(t==='cuadrante') extra=document.getElementById(`cuadrante-numero-${i}`).value||'';
+        if(t==='bomberos'){
+          const sel=document.getElementById(`bomberos-contacto-${i}`);
+          extra=sel.options[sel.selectedIndex]?.text||'';
+        }
+        if(t) organismos.push({tipo:t,extraInfo:extra,numero:num,persona:per,unidad:uni,mando:man});
+      });
+      let html='';
+      if(organismos.length===0) html='<p class="text-gray-600 italic text-sm">Complete los datos de organismos actuantes para generar el resumen.</p>';
+      else{
+        const unidades=[...new Set(organismos.map(o=>o.unidad).filter(Boolean))];
+        const mandos=[...new Set(organismos.map(o=>o.mando).filter(Boolean))];
+        const tipos=[...new Set(organismos.map(o=>{
+          const labels={'cuadrante':'Cuadrante de Paz','bomberos':'Bomberos','sistema-integrado':'Sistema Integrado','0800-bigote':'0800 Bigote'};
+          return o.extraInfo?`${labels[o.tipo]||o.tipo} (${o.extraInfo})`:labels[o.tipo]||o.tipo;
+        }))];
+        const at=[...new Set(organismos.map(o=>o.persona).filter(Boolean))];
+        const nums=[...new Set(organismos.map(o=>o.numero).filter(Boolean))];
+        html=`
+          <div class="space-y-2">
+            <div><p class="font-medium">Unidades:</p><p>${unidades.length?unidades.join(', '):'Ninguna especificada'}</p></div>
+            <div><p class="font-medium">Mandos:</p><p>${mandos.length?mandos.join(', '):'Ninguno especificado'}</p></div>
+            <div><p class="font-medium">Organismos:</p><p>${tipos.length?tipos.join(', '):'Ninguno especificado'}</p></div>
+            <div><p class="font-medium">Atendientes:</p><p>${at.length?at.join(', '):'Ninguno especificado'}</p></div>
+            <div><p class="font-medium">Números de contacto:</p><p>${nums.length?nums.join(', '):'Ninguno especificado'}</p></div>
+          </div>`;
+      }
+      resumenContent.innerHTML=html;
+      loadingResumen.classList.add('hidden');
+      resumenContent.classList.remove('hidden');
+    },1000);
+  }
+
+  let feedbackCounter=0;
+  const addFeedbackBtn=document.getElementById('add-feedback-field');
+  const feedbackContainer=document.getElementById('feedback-additional-container');
+  addFeedbackBtn.addEventListener('click',function(){
+    const id=`feedback-additional-${feedbackCounter}`;
+    const div=document.createElement('div');
+    div.className='form-group';
+    div.innerHTML=`
+      <div class="flex justify-between items-center mb-1">
+        <label for="${id}" class="block text-sm font-medium text-gray-700">Retroalimentación adicional</label>
+        <button type="button" class="text-red-600 hover:text-red-800 remove-feedback text-sm">
+          <i class="fas fa-times"></i> Eliminar
+        </button>
+      </div>
+      <textarea id="${id}" name="feedback-additional[${feedbackCounter}]" rows="3" class="w-full p-2 border border-gray-300 rounded-md"></textarea>`;
+    feedbackContainer.appendChild(div);
+    div.querySelector('.remove-feedback').addEventListener('click',()=>div.remove());
+    feedbackCounter++;
+  });
+
+  form.onsubmit = function(e){
+    e.preventDefault();
+    if(!validateStep(5)) return;
+    const fd=new FormData(form);
+    const editing=form.dataset.editing==='true';
+    const id=editing?form.dataset.editingId:Date.now().toString();
+    const createdAt=editing
+      ? JSON.parse(localStorage.getItem('emergencyFichas')).find(f=>f.id===form.dataset.editingId).createdAt
+      : new Date().toISOString();
+    const data={
+      id,createdAt,
+      tipoEmergencia:fd.get('tipo-emergencia'),
+      descripcionCaso:fd.get('descripcion-caso'),
+      municipio:fd.get('municipio'),
+      parroquia:fd.get('parroquia'),
+      ubicacion: {
+        avenida: fd.get('avenida') || '',
+        sector: fd.get('sector') || '',
+        calle: fd.get('calle') || '',
+        barrio: fd.get('barrio') || '',
+        casa: fd.get('casa') || '',
+        urbanizacion: fd.get('urbanizacion') || '',
+      },
+      puntoReferencia:fd.get('punto-referencia'),
+      solicitante:{
+        nombre:fd.get('nombre'),
+        telefono1:fd.get('telefono1'),
+        telefono2:fd.get('telefono2')||null,
+        cedula:fd.get('cedula')||'No indicó',
+        observaciones:fd.get('observaciones')||null,
+        descripcion:fd.get('descripcion-solicitante')
+      },
+      operador: {
+        codigo: fd.get('codigo-operador') || '',
+        nombre: fd.get('nombre-operador') || ''
+      },
+      organismos:[], actividadLugar:fd.get('actividad-lugar'),
+      estadoFinal:fd.get('estado-final'),
+      additionalFeedback:[]
+    };
+    document.querySelectorAll('[name^="feedback-additional"]').forEach(f=>{
+      if(f.value.trim()) data.additionalFeedback.push(f.value.trim());
+    });
+    document.querySelectorAll('.organismo-block').forEach(b=>{
+      const i=b.dataset.index;
+      const t=document.getElementById(`organismo-tipo-${i}`).value;
+      if(!t) return;
+      const org={tipo:t,numero:document.getElementById(`organismo-numero-${i}`).value,persona:document.getElementById(`organismo-persona-${i}`).value,unidad:document.getElementById(`organismo-unidad-${i}`).value,mando:document.getElementById(`organismo-mando-${i}`).value};
+      if(t==='cuadrante') org.cuadranteNumero=document.getElementById(`cuadrante-numero-${i}`).value;
+      if(t==='bomberos'){
+        const sel=document.getElementById(`bomberos-contacto-${i}`);
+        org.bomberosContacto=sel.value;
+        org.bomberosContactoLabel=sel.options[sel.selectedIndex].text;
+      }
+      data.organismos.push(org);
+    });
+
+    let fichas=JSON.parse(localStorage.getItem('emergencyFichas')||'[]');
+    if(editing){
+      const idx=fichas.findIndex(f=>f.id===id);
+      if(idx!==-1) fichas[idx]=data;
+      form.removeAttribute('data-editing'); form.removeAttribute('data-editing-id');
+      alert('Ficha actualizada exitosamente.');
+    } else {
+      fichas.push(data);
+      alert('Ficha guardada exitosamente.');
+    }
+    localStorage.setItem('emergencyFichas',JSON.stringify(fichas));
+    form.reset(); showStep(1);
+    loadCasosPendientes(); loadCasosAtendidos();
+    document.querySelectorAll('.organismo-block').forEach((b,i)=>{
+      if(i>0) b.remove();
+      else {
+        b.querySelector('.organismo-tipo').value='';
+        b.querySelector('.cuadrante-numero-container').classList.add('hidden');
+        b.querySelector('.bomberos-contacto-container').classList.add('hidden');
+        b.querySelectorAll('input').forEach(ip=>ip.value='');
+        b.querySelectorAll('select').forEach(s=>{ if(!s.classList.contains('organismo-tipo')) s.value=''; });
+      }
+    });
+    organismoCounter=1;
+    parroquiaSelect.innerHTML='<option value="">Seleccione un municipio primero</option>';
+    parroquiaSelect.disabled=true;
+    updateResumen();
+  };
+
+  function loadCasosPendientes(){
+    const fichas=JSON.parse(localStorage.getItem('emergencyFichas')||'[]').filter(f=>f.estadoFinal==='pendiente');
+    const list=document.getElementById('casos-pendientes-list');
+    if(!fichas.length) return void(list.innerHTML='<p class="text-gray-600 italic text-center py-8">No hay casos pendientes</p>');
+    list.innerHTML='';
+    fichas.forEach(f=>{
+      const card=document.createElement('div');
+      card.className='bg-white border border-gray-200 rounded-lg shadow-sm p-4';
+      const fecha=new Date(f.createdAt);
+      const fmt=`${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+      card.innerHTML=`
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Pendiente</span>
+            <h4 class="text-lg font-semibold mt-1">${f.tipoEmergencia.charAt(0).toUpperCase()+f.tipoEmergencia.slice(1)}</h4>
+            <p class="text-sm text-gray-600">${fmt}</p>
+          </div>
+          <div class="flex space-x-2">
+            <button class="view-ficha bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" data-id="${f.id}">Ver</button>
+            <button class="edit-ficha bg-gray-500 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-600" data-id="${f.id}">Editar</button>
+            <button class="close-ficha bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600" data-id="${f.id}">Cerrar Caso</button>
+            <button class="delete-ficha bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600" data-id="${f.id}">Borrar</button>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-sm font-medium">Solicitante: <span class="font-normal">${f.solicitante.nombre}</span></p>
+          <p class="text-sm font-medium">Ubicación: <span class="font-normal">${f.municipio}, ${f.puntoReferencia}</span></p>
+          <p class="text-sm text-gray-700 mt-2 line-clamp-2">${f.descripcionCaso}</p>
+        </div>`;
+      list.appendChild(card);
+    });
+    document.querySelectorAll('.view-ficha').forEach(b=>b.addEventListener('click',()=>showCaseModal(b.dataset.id)));
+    document.querySelectorAll('.edit-ficha').forEach(b=>b.addEventListener('click',()=>editCase(b.dataset.id)));
+    document.querySelectorAll('.close-ficha').forEach(b=>b.addEventListener('click',()=>closeCase(b.dataset.id)));
+    document.querySelectorAll('.delete-ficha').forEach(b=>b.addEventListener('click',()=>deleteCase(b.dataset.id)));
+  }
+
+  function loadCasosAtendidos(){
+    const fichas=JSON.parse(localStorage.getItem('emergencyFichas')||'[]').filter(f=>f.estadoFinal==='atendido');
+    const list=document.getElementById('casos-atendidos-list');
+    if(!fichas.length) return void(list.innerHTML='<p class="text-gray-600 italic text-center py-8">No hay casos atendidos</p>');
+    list.innerHTML='';
+    fichas.forEach(f=>{
+      const card=document.createElement('div');
+      card.className='bg-white border border-gray-200 rounded-lg shadow-sm p-4';
+      const fecha=new Date(f.createdAt);
+      const fmt=`${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+      card.innerHTML=`
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Atendido</span>
+            <h4 class="text-lg font-semibold mt-1">${f.tipoEmergencia.charAt(0).toUpperCase()+f.tipoEmergencia.slice(1)}</h4>
+            <p class="text-sm text-gray-600">${fmt}</p>
+          </div>
+          <div class="flex space-x-2">
+            <button class="view-ficha bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" data-id="${f.id}">Ver</button>
+            <button class="delete-ficha bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600" data-id="${f.id}">Borrar</button>
+          </div>
+        </div>
+        <div class="mt-3">
+          <p class="text-sm font-medium">Solicitante: <span class="font-normal">${f.solicitante.nombre}</span></p>
+          <p class="text-sm font-medium">Ubicación: <span class="font-normal">${f.municipio}, ${f.puntoReferencia}</span></p>
+          <p class="text-sm text-gray-700 mt-2 line-clamp-2">${f.descripcionCaso}</p>
+        </div>`;
+      list.appendChild(card);
+    });
+    document.querySelectorAll('.view-ficha').forEach(b=>b.addEventListener('click',()=>showCaseModal(b.dataset.id)));
+    document.querySelectorAll('.delete-ficha').forEach(b=>b.addEventListener('click',()=>deleteCase(b.dataset.id)));
+  }
+
+  function showCaseModal(id){
+    const fichas=JSON.parse(localStorage.getItem('emergencyFichas')||'[]');
+    const f=fichas.find(x=>x.id===id);
+    if(!f) return alert('Caso no encontrado');
+    const modal=document.getElementById('case-modal');
+    document.getElementById('modal-title').textContent=`${f.tipoEmergencia.charAt(0).toUpperCase()+f.tipoEmergencia.slice(1)} - ${(f.estadoFinal==='atendido')?'Atendido':'Pendiente'}`;
+    const fecha=new Date(f.createdAt);
+    const fmt=`${fecha.toLocaleDateString()} ${fecha.toLocaleTimeString()}`;
+    let content=`
+      <div class="bg-gray-100 p-3 rounded-lg">
+        <p class="text-sm text-gray-600">ID: ${f.id}</p>
+        <p class="text-sm text-gray-600">Fecha: ${fmt}</p>
+        <span class="inline-block mt-1 ${(f.estadoFinal==='atendido')?'bg-green-100 text-green-800':'bg-yellow-100 text-yellow-800'} text-xs font-medium px-2.5 py-0.5 rounded">${(f.estadoFinal==='atendido')?'Atendido':'Pendiente'}</span>
+      </div>
+      <div class="border-t pt-3">
+        <h4 class="font-semibold text-lg mb-2">Información Básica</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><p class="text-sm font-medium">Tipo de Emergencia:</p><p class="text-sm">${f.tipoEmergencia}</p></div>
+          <div><p class="text-sm font-medium">Municipio/Parroquia:</p><p class="text-sm">${f.municipio} / ${f.parroquia}</p></div>
+        </div>
+        <div class="mt-3"><p class="text-sm font-medium">Descripción del Caso:</p><p class="text-sm">${f.descripcionCaso}</p></div>
+      </div>
+      <div class="border-t pt-3">
+        <h4 class="font-semibold text-lg mb-2">Ubicación</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          ${f.ubicacion?.avenida ? `<div><p class="text-sm font-medium">Avenida:</p><p class="text-sm">${f.ubicacion.avenida}</p></div>` : ''}
+          ${f.ubicacion?.sector ? `<div><p class="text-sm font-medium">Sector:</p><p class="text-sm">${f.ubicacion.sector}</p></div>` : ''}
+          ${f.ubicacion?.calle ? `<div><p class="text-sm font-medium">Calle:</p><p class="text-sm">${f.ubicacion.calle}</p></div>` : ''}
+          ${f.ubicacion?.barrio ? `<div><p class="text-sm font-medium">Barrio:</p><p class="text-sm">${f.ubicacion.barrio}</p></div>` : ''}
+          ${f.ubicacion?.casa ? `<div><p class="text-sm font-medium">Casa:</p><p class="text-sm">${f.ubicacion.casa}</p></div>` : ''}
+          ${f.ubicacion?.urbanizacion ? `<div><p class="text-sm font-medium">Urbanización:</p><p class="text-sm">${f.ubicacion.urbanizacion}</p></div>` : ''}
+          <div><p class="text-sm font-medium">Punto de Referencia:</p><p class="text-sm">${f.puntoReferencia}</p></div>
+        </div>
+      </div>
+      <div class="border-t pt-3">
+        <h4 class="font-semibold text-lg mb-2">Datos del Solicitante</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><p class="text-sm font-medium">Nombre:</p><p class="text-sm">${f.solicitante.nombre}</p></div>
+          <div><p class="text-sm font-medium">Teléfono:</p><p class="text-sm">${f.solicitante.telefono1}${f.solicitante.telefono2?`, ${f.solicitante.telefono2}`:''}</p></div>
+          <div><p class="text-sm font-medium">Cédula:</p><p class="text-sm">${f.solicitante.cedula}</p></div>
+          <div><p class="text-sm font-medium">Observaciones:</p><p class="text-sm">${f.solicitante.observaciones||'N/A'}</p></div>
+        </div>
+        <div class="mt-3"><p class="text-sm font-medium">Descripción (Según Solicitante):</p><p class="text-sm">${f.solicitante.descripcion}</p></div>
+      </div>
+      <div class="border-t pt-3">
+        <h4 class="font-semibold text-lg mb-2">Organismos Actuantes</h4>
+        <div class="space-y-3">`;
+    if(!f.organismos.length) content+=`<p class="text-sm italic">No hay organismos registrados</p>`;
+    else f.organismos.forEach((o,i)=>{
+      const lab={'cuadrante':'Cuadrante de Paz','bomberos':'Bomberos','sistema-integrado':'Sistema Integrado','0800-bigote':'0800 Bigote'}[o.tipo]||o.tipo;
+      content+=`
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="font-medium">Organismo #${i+1}: ${lab}</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">`;
+      if(o.tipo==='cuadrante'&&o.cuadranteNumero) content+=`<div><p class="text-xs font-medium">Número de Cuadrante:</p><p class="text-sm">${o.cuadranteNumero}</p></div>`;
+      if(o.tipo==='bomberos'&&o.bomberosContactoLabel) content+=`<div><p class="text-xs font-medium">Contacto:</p><p class="text-sm">${o.bomberosContactoLabel}</p></div>`;
+      content+=`
+            <div><p class="text-xs font-medium">Número:</p><p class="text-sm">${o.numero}</p></div>
+            <div><p class="text-xs font-medium">Persona que Atiende:</p><p class="text-sm">${o.persona}</p></div>
+            <div><p class="text-xs font-medium">Unidad Enviada:</p><p class="text-sm">${o.unidad}</p></div>
+            <div><p class="text-xs font-medium">Mando a Cargo:</p><p class="text-sm">${o.mando}</p></div>
+          </div>
+        </div>`;
+    });
+    content+=`
+        </div>
+      </div>
+      <div class="border-t pt-3">
+        <h4 class="font-semibold text-lg mb-2">Cierre</h4>
+        <div><p class="text-sm font-medium">Retroalimentación:</p><p class="text-sm">${f.actividadLugar}</p></div>`;
+    if(f.additionalFeedback&&f.additionalFeedback.length)
+      f.additionalFeedback.forEach((fb,idx)=>
+        content+=`<div class="mt-2"><p class="text-sm font-medium">Retroalimentación adicional ${idx+1}:</p><p class="text-sm">${fb}</p></div>`
+      );
+    content+=`<div class="mt-3"><p class="text-sm font-medium">Estado Final:</p><p class="text-sm">${(f.estadoFinal==='atendido')?'Atendido efectivamente':'Atención pendiente'}</p></div>`;
+    
+    // Add operator information if available
+    if(f.operador && (f.operador.codigo || f.operador.nombre)) {
+      content+=`<div class="mt-3 pt-2 border-t">
+        <p class="text-sm font-medium">Datos del Operador:</p>
+        ${f.operador.codigo ? `<p class="text-sm">Código: ${f.operador.codigo}</p>` : ''}
+        ${f.operador.nombre ? `<p class="text-sm">Nombre: ${f.operador.nombre}</p>` : ''}
+      </div>`;
+    }
+    
+    content+=`</div>`;
+    document.getElementById('modal-content').innerHTML=content;
+    modal.classList.remove('hidden');
+  }
+
+  function editCase(id){
+    const fichas=JSON.parse(localStorage.getItem('emergencyFichas')||'[]');
+    const f=fichas.find(x=>x.id===id);
+    if(!f) return alert('Caso no encontrado');
+    showSection(crearFichaContent);
+    document.getElementById('tipo-emergencia').value=f.tipoEmergencia;
+    document.getElementById('descripcion-caso').value=f.descripcionCaso;
+    municipioSelect.value=f.municipio;
+    municipioSelect.dispatchEvent(new Event('change'));
+    setTimeout(()=>parroquiaSelect.value=f.parroquia,100);
+    document.getElementById('avenida').value = f.ubicacion.avenida || '';
+    document.getElementById('sector').value = f.ubicacion.sector || '';
+    document.getElementById('calle').value = f.ubicacion.calle || '';
+    document.getElementById('barrio').value = f.ubicacion.barrio || '';
+    document.getElementById('casa').value = f.ubicacion.casa || '';
+    document.getElementById('urbanizacion').value = f.ubicacion.urbanizacion || '';
+    document.getElementById('punto-referencia').value=f.puntoReferencia;
+    document.getElementById('nombre').value=f.solicitante.nombre;
+    document.getElementById('telefono1').value=f.solicitante.telefono1;
+    document.getElementById('telefono2').value=f.solicitante.telefono2||'';
+    if(f.solicitante.cedula==='No indicó'){ noIndicoCheckbox.checked=true; cedulaInput.value='No indicó'; cedulaInput.disabled=true; }
+    else { noIndicoCheckbox.checked=false; cedulaInput.value=f.solicitante.cedula; cedulaInput.disabled=false; }
+    document.getElementById('observaciones').value=f.solicitante.observaciones||'';
+    document.getElementById('descripcion-solicitante').value=f.solicitante.descripcion;
+
+    document.querySelectorAll('.organismo-block').forEach((b,i)=>{ if(i>0) b.remove(); });
+    const first=document.querySelector('.organismo-block');
+    first.querySelectorAll('input,select').forEach(el=>el.value='');
+    first.querySelector('.cuadrante-numero-container').classList.add('hidden');
+    first.querySelector('.bomberos-contacto-container').classList.add('hidden');
+    organismoCounter=0;
+
+    f.organismos.forEach((o,i)=>{
+      if(i===0){
+        document.getElementById('organismo-tipo-0').value=o.tipo;
+        document.getElementById('organismo-numero-0').value=o.numero;
+        document.getElementById('organismo-persona-0').value=o.persona;
+        document.getElementById('organismo-unidad-0').value=o.unidad;
+        document.getElementById('organismo-mando-0').value=o.mando;
+        if(o.tipo==='cuadrante'){
+          first.querySelector('.cuadrante-numero-container').classList.remove('hidden');
+          document.getElementById('cuadrante-numero-0').value=o.cuadranteNumero;
+        } else if(o.tipo==='bomberos'){
+          first.querySelector('.bomberos-contacto-container').classList.remove('hidden');
+          document.getElementById('bomberos-contacto-0').value=o.bomberosContacto;
+        }
+        organismoCounter=1;
+      } else {
+        addOrganismoBtn.click();
+        const idx=organismoCounter-1;
+        document.getElementById(`organismo-tipo-${idx}`).value=o.tipo;
+        document.getElementById(`organismo-numero-${idx}`).value=o.numero;
+        document.getElementById(`organismo-persona-${idx}`).value=o.persona;
+        document.getElementById(`organismo-unidad-${idx}`).value=o.unidad;
+        document.getElementById(`organismo-mando-${idx}`).value=o.mando;
+        document.getElementById(`organismo-tipo-${idx}`).dispatchEvent(new Event('change'));
+        if(o.tipo==='cuadrante') document.getElementById(`cuadrante-numero-${idx}`).value=o.cuadranteNumero;
+        if(o.tipo==='bomberos') document.getElementById(`bomberos-contacto-${idx}`).value=o.bomberosContacto;
+      }
+    });
+
+    document.getElementById('actividad-lugar').value=f.actividadLugar;
+    document.querySelector(`input[name="estado-final"][value="${f.estadoFinal}"]`).checked=true;
+    form.dataset.editing='true';
+    form.dataset.editingId=id;
+    showStep(1);
+    updateResumen();
+  }
+
+  function closeCase(id){
+    if(confirm('¿Está seguro que desea cerrar este caso? El caso se moverá a la sección de Casos Atendidos.')){
+      let fichas=JSON.parse(localStorage.getItem('emergencyFichas')||'[]');
+      const idx=fichas.findIndex(f=>f.id===id);
+      if(idx!==-1){ fichas[idx].estadoFinal='atendido'; localStorage.setItem('emergencyFichas',JSON.stringify(fichas)); alert('Caso cerrado exitosamente.'); loadCasosPendientes(); loadCasosAtendidos(); }
+      else alert('Caso no encontrado.');
+    }
+  }
+  function deleteCase(id){
+    if(confirm('¿Está seguro que desea eliminar este caso? Esta acción no se puede deshacer.')){
+      const updated=JSON.parse(localStorage.getItem('emergencyFichas')||'[]').filter(f=>f.id!==id);
+      localStorage.setItem('emergencyFichas',JSON.stringify(updated));
+      alert('Caso eliminado exitosamente.');
+      loadCasosPendientes(); loadCasosAtendidos();
+    }
+  }
+
+  document.getElementById('close-modal').addEventListener('click',()=>document.getElementById('case-modal').classList.add('hidden'));
+
+  showSection(crearFichaContent);
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[required]').forEach(element => {
+      element.removeAttribute('required');
+    });
+  });
+</script>
+</body>
+</html>
