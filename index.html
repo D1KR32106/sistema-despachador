@@ -1072,13 +1072,10 @@
       );
     content+=`<div class="mt-3"><p class="text-sm font-medium">Estado Final:</p><p class="text-sm">${(f.estadoFinal==='atendido')?'Atendido efectivamente':'Atención pendiente'}</p></div>`;
     
-    // Add operator information if available
-    if(f.operador && (f.operador.codigo || f.operador.nombre)) {
-      content+=`<div class="mt-3 pt-2 border-t">
-        <p class="text-sm font-medium">Datos del Operador:</p>
-        ${f.operador.codigo ? `<p class="text-sm">Código: ${f.operador.codigo}</p>` : ''}
-        ${f.operador.nombre ? `<p class="text-sm">Nombre: ${f.operador.nombre}</p>` : ''}
-      </div>`;
+    // Add operator information if they exist
+    if (f.operador) {
+      document.getElementById('codigo-operador').value = f.operador.codigo || '';
+      document.getElementById('nombre-operador').value = f.operador.nombre || '';
     }
     
     content+=`</div>`;
